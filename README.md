@@ -8,6 +8,7 @@
     - `v-else`
     - binding attr `:` or `v-bind:`
     - perulangan `v-for="(row, index) in rows"`
+    - `v-show="kondisi = value"` : mirip seperti if
 
 
 # Method
@@ -21,5 +22,8 @@
 
 
 # watcher
--
+- 
 
+# prefix componen
+- newCompxxx : digunakan di header
+- 

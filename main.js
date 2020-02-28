@@ -39,7 +39,7 @@ var compKategori = {
     },
     methods: {
         reqKategori(kat){
-            this.selectedKat = kat
+            this.selectedKat = kat // for menu active
             var lower = kat.toLowerCase()
                 // lowerExt = window["ext_"+lower] // convert to variable
                 
@@ -95,6 +95,11 @@ Vue.component("x-newdomain",{
                                     </li>
                                 </ul>
                             </div>
+                            <div class="panel-footer">
+                                <ul>
+                                    <li v-for="row in choices">{{ row }}</li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
                     <div class="col-sm-7">
@@ -104,7 +109,7 @@ Vue.component("x-newdomain",{
                                     <div class="input-group">
                                         <input type="text" v-model="domain" class="form-control" placeholder="Enter domain">
                                         <span class="input-group-btn">
-                                            <input class="btn btn-primary domain-button" type="button" value="Search">
+                                            <button class="btn btn-primary domain-button" @click="requestAPI" type="button">Search</button>
                                         </span>
                                     </div>
                                 </div>
@@ -115,21 +120,16 @@ Vue.component("x-newdomain",{
                             <div class="panel-heading"><b>Result {{ domain }}</b></div>
                             <div class="panel-body">
 
-                                <div v-if="choices.length === 0">
-                                    <p><i>empty</i></p>
+                                <div v-show="sttsReq.length === 0" class="text-center">
+                                    <i class="fa fa-spin fa-spinner fa-4x"></i>
+                                    <p>Please wait ...</p>
                                 </div>
-                                <div v-else>
-                                    <div v-if="sttsReq.length === 0" class="text-center">
-                                        <i class="fa fa-spin fa-spinner fa-4x"></i>
-                                        <p>Please wait ...</p>
-                                    </div>
-                                    <div>
-                                        <ul>
-                                            <li v-for="rs in requestAPI"><b>{{rs.domain}}</b> {{ rs.stts }}</li>
-                                        </ul>
-                                    </div>
+                                <div>
+                                    <ul>
+                                        <li v-for="rs in sttsReq"><b>{{rs.domain}}</b> {{ rs.stts }} {{ rs.price }}</li>
+                                    </ul>
+                                </div>
 
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -156,12 +156,10 @@ Vue.component("x-newdomain",{
     methods: {
         updateExt(extKategori){
             this.exts = extKategori
-        }
-    },
-    computed: {
+        },
         requestAPI() {
-            let URLAPI = "https://order2.rumahweb.com/order/siapa/domain/";
-            // let URLAPI = "https://ron-swanson-quotes.herokuapp.com/v2/quotes/";
+            // let URLAPI = "https://order2.rumahweb.com/order/siapa/domain/";
+            let URLAPI = "https://ron-swanson-quotes.herokuapp.com/v2/quotes/";
 
             let dom = this.domain
                 dom = dom.replace(/\s/g, '')
@@ -169,10 +167,9 @@ Vue.component("x-newdomain",{
 
             let stts = []
             let choices = this.choices
-
             for (let i = 0; i < choices.length; i++){
 
-                let x = dom+choices[i]
+                let x = dom+"."+choices[i]
 
                 // logs
                 console.log("request to : "+URLAPI+x)
@@ -182,13 +179,18 @@ Vue.component("x-newdomain",{
                     stts.push(
                         {
                             "domain" : x,
-                            "stts" : res.data
+                            "stts" : res.data,
+                            "price" : choices[i]
                         }
                     )
                 })
             }
-            return this.sttsReq = stts
-        },
+            this.sttsReq = stts
+            console.log([this.sttsReq, stts])
+        }
+    },
+    computed: {
+        
         
     }
 })
