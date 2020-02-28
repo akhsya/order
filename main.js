@@ -100,7 +100,7 @@ Vue.component("x-newdomain",{
     computed: {
         requestAPI() {
             // let URLAPI = "https://order2.rumahweb.com/order/siapa/domain/";
-            let URLAPI = "http://ron-swanson-quotes.herokuapp.com/v2/quotes/";
+            let URLAPI = "https://ron-swanson-quotes.herokuapp.com/v2/quotes/";
 
             let dom = this.domain
             let stts = []
