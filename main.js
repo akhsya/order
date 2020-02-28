@@ -22,28 +22,67 @@ Vue.component("x-head",{
     },
 })
 
+var compKategori = {
+    template : 
+    `
+    <div>
+        <ul class="list-group">
+            <li :class="{active : selectedKat === kat}" class="list-group-item" v-for="(kat, index) in kategori" :key="index" @click="reqKategori(kat)" style="cursor:pointer">{{ kat }}</li>
+        </ul>
+    </div>
+    `,
+    data() {
+        return {
+            kategori    : ["Rekomendasi","Promo","Populer","Indonesia","Bisnis", "Hobi"],
+            selectedKat : "Rekomendasi"
+        }
+    },
+    methods: {
+        reqKategori(kat){
+            this.selectedKat = kat
+            var lower = kat.toLowerCase()
+                // lowerExt = window["ext_"+lower] // convert to variable
+                
+            switch (lower){
+                case "promo":
+                    this.$emit("changeExt", ext_promo); // parsing parent
+                    break
+
+                case "populer":
+                    this.$emit("changeExt", ext_populer); // parsing parent
+                    break
+
+                case "indonesia":
+                    this.$emit("changeExt", ext_indonesia); // parsing parent
+                    break
+
+                case "bisnis":
+                    this.$emit("changeExt", ext_bisnis); // parsing parent
+                    break
+
+                case "hobi":
+                    this.$emit("changeExt", ext_hobi); // parsing parent
+                    break
+
+                default :
+                    this.$emit("changeExt", ext_rekomendasi); // parsing parent
+                    break
+            }
+        }
+    },
+}
+
 Vue.component("x-newdomain",{
     template : `
     <div class="jumbotronr" style="margin-top:3%;border-radius:0px">
         <div class="row">
             <div class="col-sm-2">
-                <ul>
-                    <li>Promo</li>
-                    <li>Popular</li>
-                    <li>Indonesia</li>
-                </ul>
+                <compKategori @changeExt="updateExt($event)"></compKategori>
             </div>
             <div class="col-sm-10">
-                <form class="form-horizontal" action="/action_page.php">
-                    <div class="form-group">
-                        <div class="col-sm-12">
-                            <input type="text" v-model="domain" class="form-control input-lg" placeholder="Enter domain">
-                        </div>
-                    </div>
-                </form>
-
+                
                 <div class="row">
-                    <div class="col-sm-6">
+                    <div class="col-sm-5">
                         <div class="panel panel-default panel-tld">
                             <div class="panel-heading"><strong>Ekstensi Domain yang Tersedia</strong></div>
                             <div class="panel-body">
@@ -58,10 +97,24 @@ Vue.component("x-newdomain",{
                             </div>
                         </div>
                     </div>
-                    <div class="col-sm-6">
+                    <div class="col-sm-7">
+                        <form class="form-horizontal">
+                            <div class="form-group">
+                                <div class="col-sm-12">
+                                    <div class="input-group">
+                                        <input type="text" v-model="domain" class="form-control" placeholder="Enter domain">
+                                        <span class="input-group-btn">
+                                            <input class="btn btn-primary domain-button" type="button" value="Search">
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+
                         <div class="panel panel-default">
                             <div class="panel-heading"><b>Result {{ domain }}</b></div>
                             <div class="panel-body">
+
                                 <div v-if="choices.length === 0">
                                     <p><i>empty</i></p>
                                 </div>
@@ -91,18 +144,29 @@ Vue.component("x-newdomain",{
     `,
     data() {
         return {
-            exts : ext_rekomended,
-            choices : [],
-            domain : "akhulsyaifudin",
-            sttsReq : []
+            exts        : ext_rekomendasi,
+            choices     : [],
+            domain      : "akhulsyaifudin",
+            sttsReq     : [],
+        }
+    },
+    components : {
+        compKategori : compKategori
+    },
+    methods: {
+        updateExt(extKategori){
+            this.exts = extKategori
         }
     },
     computed: {
         requestAPI() {
-            // let URLAPI = "https://order2.rumahweb.com/order/siapa/domain/";
-            let URLAPI = "https://ron-swanson-quotes.herokuapp.com/v2/quotes/";
+            let URLAPI = "https://order2.rumahweb.com/order/siapa/domain/";
+            // let URLAPI = "https://ron-swanson-quotes.herokuapp.com/v2/quotes/";
 
             let dom = this.domain
+                dom = dom.replace(/\s/g, '')
+            this.domain = dom
+
             let stts = []
             let choices = this.choices
 
@@ -111,7 +175,7 @@ Vue.component("x-newdomain",{
                 let x = dom+choices[i]
 
                 // logs
-                console.log("request API : ".URLAPI+x)
+                console.log("request to : "+URLAPI+x)
 
                 axios.get(URLAPI+x)
                 .then(function(res){
@@ -124,8 +188,8 @@ Vue.component("x-newdomain",{
                 })
             }
             return this.sttsReq = stts
-            
-        }
+        },
+        
     }
 })
 
@@ -153,7 +217,7 @@ Vue.component("x-tabs",{
     template : `
     <div>
         <ul class="nav nav-tabs">
-            <li v-for="(tab, index) in tabs" :class="{ active : selectedTabs ===tab }" :key="index" @click="selectedTabs = tab">
+            <li v-for="(tab, index) in tabs" :class="{ active : selectedTabs === tab }" :key="index" @click="selectedTabs = tab">
                 <a>{{tab}}</a>
             </li>
         </ul>
