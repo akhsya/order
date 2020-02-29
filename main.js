@@ -187,36 +187,35 @@ Vue.component("x-newdomain",{
 Vue.component("x-transfer",{
     template : `
         <div style="margin-top:3%">
-        <div class="row">
-            <div class="col-sm-5">
-                <form class="form-horizontal">
-                    <div class="form-group">
-                        <div class="col-sm-12">
-                            <div class="input-group">
-                                <input type="text" v-model="domain" class="form-control" placeholder="Enter domain">
-                                <span class="input-group-btn">
-                                    <button class="btn btn-primary domain-button" @click="anapoora" type="button">Search</button>
-                                </span>
+            <div class="row">
+                <div class="col-sm-5">
+                    <form class="form-horizontal">
+                        <div class="form-group">
+                            <div class="col-sm-12">
+                                <div class="input-group">
+                                    <input type="text" v-model="domain" class="form-control" placeholder="Enter domain">
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-primary domain-button" @click="anapoora" type="button">Search</button>
+                                    </span>
+                                </div>
                             </div>
                         </div>
+                    </form>
+                </div>
+                <div class="col-sm-7">
+                    <div class="alert alert-success" v-if="status.length != 0">
+                        <ul>
+                            <li>{{ status.domain }}</li>
+                            <li>{{ status.status }}</li>
+                        </ul>
                     </div>
-                </form>
-            </div>
-            <div class="col-sm-7">
-                <div class="alert alert-success" v-if="status.length != 0">
-                    <ul>
-                        <li>{{ status.domain }}</li>
-                        <li>{{ status.status }}</li>
-                    </ul>
                 </div>
             </div>
-        </div>
-        
         </div>
     `,
     data() {
         return {
-            domain : "mtsmaarifnu1kemranjen.sch.id",
+            domain : "akhulsyaifudin.xyz",
             status : []
         }
     },
@@ -246,12 +245,53 @@ Vue.component("x-transfer",{
 
 Vue.component("x-hosting",{
     template : `
-        <div>
-            <div class="alert alert-info" style="margin-top:3%;border-radius:0px">
-                <strong>hosting!</strong> Indicates a successful or positive action.
+    <div style="margin-top:3%">
+        <div class="row">
+            <div class="col-sm-5">
+                <form class="form-horizontal" onsubmit="event.preventDefault()">
+                    <div class="form-group">
+                        <div class="col-sm-12">
+                            <div class="input-group">
+                                <input type="text" v-model="domain" class="form-control" placeholder="Enter domain">
+                                <span class="input-group-btn">
+                                    <button class="btn btn-primary domain-button" @click="anapoora" type="button">Search</button>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="col-sm-7">
+                <div class="alert alert-success" v-if="status.length != 0">
+                    <ul>
+                        <li>{{ status.domain }}</li>
+                        <li>{{ status.status }}</li>
+                    </ul>
+                </div>
             </div>
         </div>
-    `
+    </div>
+    `,
+    data() {
+        return {
+            domain : "akhulsyaifudin.xyz",
+            status : []
+        }
+    },
+    methods: {
+        anapoora(){
+            var domain  = this.domain
+            var URL     = "https://order2.rumahweb.com/order/siapa/nodomain/"+domain
+            var current = this
+
+            axios.get(URL).then(function(susuk){
+                current.status =  {
+                    "domain" :domain,
+                    "status" :susuk.data 
+                }
+            })
+        }
+    },
 })
 
 Vue.component("x-tabs",{
@@ -267,7 +307,7 @@ Vue.component("x-tabs",{
             <x-newdomain></x-newdomain>
         </div>
 
-        <div v-show="selectedTabs === 'Transfer'">
+        <div v-show="selectedTabs === 'Transfer Domain'">
             <x-transfer></x-transfer>
         </div>
 
@@ -279,8 +319,8 @@ Vue.component("x-tabs",{
     `,
     data() {
         return {
-            tabs : ["Domain Baru", "Transfer", "Hosting Saja"],
-            selectedTabs : "Transfer"
+            tabs : ["Domain Baru", "Transfer Domain", "Hosting Saja"],
+            selectedTabs : "Hosting Saja"
         }
     },
 })
