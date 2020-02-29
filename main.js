@@ -41,33 +41,9 @@ var compKategori = {
         reqKategori(kat){
             this.selectedKat = kat // for menu active
             var lower = kat.toLowerCase()
-                // lowerExt = window["ext_"+lower] // convert to variable
-                
-            switch (lower){
-                case "promo":
-                    this.$emit("changeExt", ext_promo); // parsing parent
-                    break
-
-                case "populer":
-                    this.$emit("changeExt", ext_populer); // parsing parent
-                    break
-
-                case "indonesia":
-                    this.$emit("changeExt", ext_indonesia); // parsing parent
-                    break
-
-                case "bisnis":
-                    this.$emit("changeExt", ext_bisnis); // parsing parent
-                    break
-
-                case "hobi":
-                    this.$emit("changeExt", ext_hobi); // parsing parent
-                    break
-
-                default :
-                    this.$emit("changeExt", ext_rekomendasi); // parsing parent
-                    break
-            }
+            
+            this.$emit("changeExt", eval("ext_"+lower))  
+           
         }
     },
 }
@@ -124,10 +100,28 @@ Vue.component("x-newdomain",{
                                     <i class="fa fa-spin fa-spinner fa-4x"></i>
                                     <p>Please wait ...</p>
                                 </div>
-                                <div>
-                                    <ul>
-                                        <li v-for="rs in sttsReq"><b>{{rs.domain}}</b> {{ rs.stts }} {{ rs.price }}</li>
-                                    </ul>
+                                <div v-show="sttsReq.length != 0">
+                                    <table class="table table-striped ">
+                                        <thead>
+                                            <tr>
+                                                <th>Domain</th>
+                                                <th>Harga</th>
+                                                <th>Promo</th>
+                                                <th>Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr v-for="(row, index) in sttsReq" :key="index">
+                                                <td>{{ row.domain }}</td>
+                                                <td>
+                                                    <span v-if="row.disc == 0">{{ row.price }}</span>
+                                                    <span v-else><del>{{ row.price }}</del></span>
+                                                </td>
+                                                <td>{{ row.disc }}</td>
+                                                <td>{{ row.stts }}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
                                 </div>
 
                             </div>
@@ -158,35 +152,34 @@ Vue.component("x-newdomain",{
             this.exts = extKategori
         },
         requestAPI() {
-            // let URLAPI = "https://order2.rumahweb.com/order/siapa/domain/";
-            let URLAPI = "https://ron-swanson-quotes.herokuapp.com/v2/quotes/";
+            let URLAPI = "https://order2.rumahweb.com/order/siapa/domain/";
+            // let URLAPI = "https://ron-swanson-quotes.herokuapp.com/v2/quotes/";
 
-            let dom = this.domain
-                dom = dom.replace(/\s/g, '')
-            this.domain = dom
+            let domain = this.domain
+                domain = domain.replace(/\s/g, '')
+            this.domain = domain
 
             let stts = []
             let choices = this.choices
             for (let i = 0; i < choices.length; i++){
 
-                let x = dom+"."+choices[i]
+                let domainName = domain+"."+choices[i] //
+                console.log("request to : "+URLAPI+domainName)
 
-                // logs
-                console.log("request to : "+URLAPI+x)
-
-                axios.get(URLAPI+x)
+                axios.get(URLAPI+domainName)
                 .then(function(res){
                     stts.push(
                         {
-                            "domain" : x,
+                            "domain" : domainName,
                             "stts" : res.data,
-                            "price" : choices[i]
+                            "price" : (typeof eval(price[0][choices[i]]) ==="undefined")?"99.999.999":eval(price[0][choices[i]])[1],
+                            "disc" : (typeof eval(price[0][choices[i]]) ==="undefined")?0:eval(price[0][choices[i]])["disc"]
                         }
                     )
                 })
+                
             }
             this.sttsReq = stts
-            console.log([this.sttsReq, stts])
         }
     },
     computed: {
