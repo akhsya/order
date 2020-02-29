@@ -163,7 +163,7 @@ Vue.component("x-newdomain",{
             let choices = this.choices
             for (let i = 0; i < choices.length; i++){
 
-                let domainName = domain+"."+choices[i] //
+                let domainName = domain+"."+choices[i] 
                 console.log("request to : "+URLAPI+domainName)
 
                 axios.get(URLAPI+domainName)
@@ -172,7 +172,7 @@ Vue.component("x-newdomain",{
                         {
                             "domain" : domainName,
                             "stts" : res.data,
-                            "price" : (typeof eval(price[0][choices[i]]) ==="undefined")?"99.999.999":eval(price[0][choices[i]])[1],
+                            "price" : (typeof eval(price[0][choices[i]]) ==="undefined")?"belum set":eval(price[0][choices[i]])[1],
                             "disc" : (typeof eval(price[0][choices[i]]) ==="undefined")?0:eval(price[0][choices[i]])["disc"]
                         }
                     )
@@ -181,21 +181,67 @@ Vue.component("x-newdomain",{
             }
             this.sttsReq = stts
         }
-    },
-    computed: {
-        
-        
     }
 })
 
 Vue.component("x-transfer",{
     template : `
-        <div>
-            <div class="alert alert-success" style="margin-top:3%;border-radius:0px">
-                <strong>transfer!</strong> Indicates a successful or positive action.
+        <div style="margin-top:3%">
+        <div class="row">
+            <div class="col-sm-5">
+                <form class="form-horizontal">
+                    <div class="form-group">
+                        <div class="col-sm-12">
+                            <div class="input-group">
+                                <input type="text" v-model="domain" class="form-control" placeholder="Enter domain">
+                                <span class="input-group-btn">
+                                    <button class="btn btn-primary domain-button" @click="anapoora" type="button">Search</button>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="col-sm-7">
+                <div class="alert alert-success" v-if="status.length != 0">
+                    <ul>
+                        <li>{{ status.domain }}</li>
+                        <li>{{ status.status }}</li>
+                    </ul>
+                </div>
             </div>
         </div>
-    `
+        
+        </div>
+    `,
+    data() {
+        return {
+            domain : "mtsmaarifnu1kemranjen.sch.id",
+            status : []
+        }
+    },
+    methods: {
+        anapoora(){
+            var domain  = this.domain
+            var URL     = "https://order2.rumahweb.com/order/siapa/transfer/"+domain
+            var current = this
+            
+            // axios.post("https://order2.rumahweb.com/order/searchhosting",{
+            //     "transferdomain" : domain
+            // })
+            // .then(function(susukGolek){
+            //     console.log(susukGolek)
+            // })
+
+
+            axios.get(URL).then(function(susuk){
+                current.status =  {
+                    "domain" :domain,
+                    "status" :susuk.data 
+                }
+            })
+        }
+    },
 })
 
 Vue.component("x-hosting",{
@@ -234,7 +280,7 @@ Vue.component("x-tabs",{
     data() {
         return {
             tabs : ["Domain Baru", "Transfer", "Hosting Saja"],
-            selectedTabs : "Domain Baru"
+            selectedTabs : "Transfer"
         }
     },
 })
